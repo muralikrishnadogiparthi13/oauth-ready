@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OAuth Ready</title>
+<meta name="description" content="How long until your users can connect an app? Setup and approval guides for OAuth apps, for developers building AI agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#16181d;--muted:#5d6370;--line:#e4e4df;--accent:#3b5bfd;--accent-ink:#fff;--soft:#eef1ff;
+--easy:#0f8a4f;--easy-bg:#e5f6ec;--mod:#9a6400;--mod-bg:#fdf3dc;--hard:#c2410c;--hard-bg:#fde9df;--vh:#b4233c;--vh-bg:#fbe2e7;--ok:#0f8a4f;--warn:#9a6400}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#171a21;--ink:#e9eaee;--muted:#9aa1ad;--line:#262a33;--accent:#7c93ff;--accent-ink:#0f1115;--soft:#1c2233;
+--easy:#4ade80;--easy-bg:#12301f;--mod:#fbbf24;--mod-bg:#33280f;--hard:#fb923c;--hard-bg:#3a2010;--vh:#fb7185;--vh-bg:#3a1520;--ok:#4ade80;--warn:#fbbf24}}
+*{box-sizing:border-box}html,body{margin:0;overflow-x:hidden}
+.box,.card,.stat,.src,li,dd{overflow-wrap:anywhere;min-width:0}.two>*,.grid>*,.stats>*{min-width:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+header{padding:18px 0 6px}.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--ink)}
+.logo{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-size:15px}
+h1{font-size:26px;line-height:1.2;margin:18px 0 8px;letter-spacing:-.02em}h2{font-size:18px;margin:28px 0 10px}h3{font-size:15px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 18px;max-width:640px}
+.search{display:flex;gap:8px;flex-wrap:wrap}.search input{flex:1 1 220px;min-width:0;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.btn{border:0;border-radius:12px;padding:12px 16px;background:var(--accent);color:var(--accent-ink);font:600 15px Inter,sans-serif;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}.btn:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:13px;margin:8px 0 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:block;color:inherit}
+a.card:hover{border-color:var(--accent);text-decoration:none}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.d-easy{color:var(--easy);background:var(--easy-bg)}.d-moderate{color:var(--mod);background:var(--mod-bg)}.d-hard{color:var(--hard);background:var(--hard-bg)}.d-very_hard{color:var(--vh);background:var(--vh-bg)}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;background:var(--soft);color:var(--accent);font-weight:600}
+.muted{color:var(--muted)}.small{font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}.stat b{display:block;font-size:15px}.stat span{font-size:12px;color:var(--muted)}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}h1{font-size:22px}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
+ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:0}
+ol.steps li{counter-increment:s;position:relative;padding:10px 0 10px 38px;border-top:1px solid var(--line)}ol.steps li:first-child{border-top:0}
+ol.steps li:before{content:counter(s);position:absolute;left:0;top:10px;width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:700;font-size:13px;display:grid;place-items:center}
+ul.clean{margin:0;padding-left:18px}ul.clean li{margin:4px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:640px){.two{grid-template-columns:1fr}}
+.who{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:1px 6px;border-radius:5px;margin-left:6px;vertical-align:1px}
+.who-you{background:var(--hard-bg);color:var(--hard)}.who-agent{background:var(--easy-bg);color:var(--easy)}.who-either{background:var(--soft);color:var(--accent)}
+.src{border-top:1px solid var(--line);padding:10px 0}.src:first-child{border-top:0}
+.src q{display:block;font-style:italic;color:var(--muted);margin-top:4px;quotes:"\201C" "\201D"}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+.log{font:13px/1.6 "JetBrains Mono",monospace;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;max-height:340px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.log div{padding:2px 0}.log .fail{color:var(--vh)}
+.banner{border-radius:12px;padding:10px 12px;font-size:14px;margin:12px 0}.banner.gen{background:var(--mod-bg);color:var(--mod)}.banner.cur{background:var(--easy-bg);color:var(--easy)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+footer{color:var(--muted);font-size:13px;padding:40px 0 30px}
+.back{display:inline-block;margin:14px 0 0;font-size:14px}
+dl.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0}dl.kv dt{color:var(--muted)}dl.kv dd{margin:0}
+@media (max-width:520px){dl.kv{grid-template-columns:1fr}dl.kv dt{margin-top:6px}}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:r 0.8s linear infinite;vertical-align:-1px;margin-right:6px}@keyframes r{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><a class="brand" href="/" data-nav><span class="logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 20 3M16 7l3 3M14 9l2 2"/></svg></span>OAuth Ready</a></header>
+  <main id="app"><p class="muted">Loading…</p></main>
+  <footer>Built as a take-home for the Composio APM, Integrations role. Guides marked <b>Reviewed</b> were researched from official provider docs and checked by hand; <b>Agent-generated</b> guides are produced live and every quote is string-matched to its source page. Always confirm against the provider before you ship.</footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DIFF = {easy:'Easy', moderate:'Moderate', hard:'Hard', very_hard:'Very hard'};
+let LIB = null;
+
+async function library(){ if(!LIB) LIB = await (await fetch('/api/library')).json(); return LIB; }
+function go(path){ history.pushState({}, '', path); route(); window.scrollTo(0,0); }
+document.addEventListener('click', e => { const a = e.target.closest('a[data-nav]'); if(a){ e.preventDefault(); go(a.getAttribute('href')); }});
+window.addEventListener('popstate', route);
+
+async function route(){
+  const p = location.pathname;
+  if(p.startsWith('/g/')) return showGuide(decodeURIComponent(p.slice(3)));
+  if(p.startsWith('/new')) return runAgent(new URLSearchParams(location.search).get('app') || '');
+  return home();
+}
+
+async function home(){
+  const L = await library();
+  const managed = L.toolkits.filter(t=>t.managed).length, byo = L.toolkits.length - managed;
+  $('#app').innerHTML = `
+  <h1>How long until your users can connect an app?</h1>
+  <p class="sub">Before an AI agent can act in someone's account, you often need your own OAuth app with that provider, and sometimes a review. Look up an app to see the steps, the wait, what can block approval, and what an agent can do for you.</p>
+  <form class="search" id="f">
+    <input id="q" list="tk" placeholder="e.g. Notion or zoom.us" autocomplete="off" aria-label="App name or website">
+    <datalist id="tk">${L.toolkits.map(t=>`<option value="${esc(t.name)}">${t.managed?'Composio-managed':'Bring your own app'}</option>`).join('')}</datalist>
+    <button class="btn">Get guide</button>
+  </form>
+  <p class="hint">Apps in the library open instantly. Anything else is researched live by an agent (about a minute).</p>
+  <div class="stats">
+    <div class="stat"><b>${L.toolkits.length}</b><span>Composio toolkits that use OAuth</span></div>
+    <div class="stat"><b>${byo}</b><span>need you to bring your own OAuth app</span></div>
+    <div class="stat"><b>${managed}</b><span>have a Composio-managed app (own app optional)</span></div>
+  </div>
+  <h2>Reviewed guides</h2>
+  <p class="muted small" style="margin-top:-4px">Picked to cover the main setup patterns: instant, review only for public listing, user caps before review, paid security assessment, marketplace review, and per-customer setup.</p>
+  <div class="grid">${L.guides.map(cardHtml).join('')}</div>
+  <h2>How to read a guide</h2>
+  <div class="box small"><ul class="clean">
+    <li><b>Difficulty</b>: Easy = self-serve, no review. Moderate = review only to list publicly or scale. Hard = review before real users. Very hard = paid assessment or legal-entity checks that take weeks.</li>
+    <li><b>Time to production</b> includes the provider's review wait. If the provider doesn't publish a wait time, the guide says so instead of guessing.</li>
+    <li><span class="who who-agent">agent</span> steps can be done or drafted by an agent. <span class="who who-you">you</span> steps need a human or a legal entity (identity checks, payment, sign-off).</li>
+    <li>Every guide ends with its <b>evidence</b>: sources with the exact line that supports each claim, plus what could not be verified.</li>
+  </ul></div>`;
+  $('#f').onsubmit = e => { e.preventDefault(); const v = $('#q').value.trim(); if(!v) return;
+    const g = L.guides.find(x => x.name.toLowerCase() === v.toLowerCase() || x.slug === v.toLowerCase());
+    go(g ? '/g/'+g.slug : '/new?app='+encodeURIComponent(v)); };
+}
+
+function cardHtml(g){ return `<a class="card" href="/g/${g.slug}" data-nav>
+  <div class="row between"><h3>${esc(g.name)}</h3><span class="pill d-${g.difficulty}">${DIFF[g.difficulty]||esc(g.difficulty)}</span></div>
+  <div class="small muted" style="margin:2px 0 6px">Production: ${esc(g.time_to_production)}</div>
+  <div class="small">${esc(g.one_liner)}</div></a>`; }
+
+async function showGuide(slug){
+  $('#app').innerHTML = '<p class="muted"><span class="spin"></span>Loading guide…</p>';
+  const r = await fetch('/api/guide/'+encodeURIComponent(slug));
+  if(!r.ok){ $('#app').innerHTML = `<p>No guide for <b>${esc(slug)}</b> yet.</p><button class="btn" onclick="go('/new?app=${encodeURIComponent(slug)}')">Generate it now</button>`; return; }
+  renderGuide(await r.json());
+}
+
+function list(a){ return a && a.length ? `<ul class="clean">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="muted small">None noted.</p>'; }
+
+function renderGuide(g, target){
+  const v = g.verification || {}, ap = g.approval || {};
+  const html = `
+  <a class="back" href="/" data-nav>← All guides</a>
+  <div class="row between" style="margin-top:8px"><h1 style="margin:6px 0">${esc(g.name)}</h1><span class="pill d-${g.difficulty}" style="font-size:13px">${DIFF[g.difficulty]||esc(g.difficulty)}</span></div>
+  <div class="banner ${g.generated?'gen':'cur'}">${g.generated ? `Agent-generated on ${esc(g.last_updated)}. ${v.quotes_matched??0} of ${(v.quotes_matched??0)+(v.quotes_unmatched??0)} quotes matched their source pages. Not reviewed by a human: confirm before you rely on it.` : `Reviewed guide. Researched from official docs, last checked ${esc(v.checked_on||g.last_updated)}.`}</div>
+  <p style="font-size:16px"><b>${esc(g.one_liner)}</b></p>
+  <p class="muted">${esc(g.difficulty_reason||'')}</p>
+  <div class="stats">
+    <div class="stat"><b>${esc(g.time_to_first_test)}</b><span>to a working test connection</span></div>
+    <div class="stat"><b>${esc(g.time_to_production)}</b><span>to real users (incl. review)</span></div>
+    <div class="stat"><b>${esc(ap.cost||'—')}</b><span>cost to get approved</span></div>
+  </div>
+  <div class="toolbar"><button class="btn ghost" id="share">Copy share link</button><button class="btn ghost" id="md">Copy as Markdown</button>${g.generated?`<button class="btn ghost" id="refresh">Re-run agent</button>`:''}</div>
+  <div class="box"><h3>Composio</h3><p class="small" style="margin:0">${esc(g.composio_note)}</p></div>
+  <h2>Approval and review</h2>
+  <div class="box"><dl class="kv">
+    <dt>What triggers review</dt><dd>${esc(ap.required_for)}</dd>
+    <dt>Who reviews</dt><dd>${esc(ap.who_reviews)}</dd>
+    <dt>Typical wait</dt><dd>${esc(ap.typical_wait)}</dd>
+    <dt>Cost</dt><dd>${esc(ap.cost)}</dd></dl></div>
+  <h2>Before you start</h2><div class="box">${list(g.account_prerequisites)}</div>
+  <h2>Steps</h2><div class="box"><ol class="steps">${(g.steps||[]).map(s=>`<li><b>${esc(s.title)}</b><span class="who who-${esc(s.who)}">${esc(s.who)}</span><div class="small">${esc(s.detail)}</div>${s.url?`<div class="small"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url.replace(/^https?:\/\//,'').slice(0,70))}</a></div>`:''}</li>`).join('')}</ol></div>
+  <h2>Watch out for</h2><div class="box">${list(g.nuances)}</div>
+  <h2>If you get stuck</h2><div class="box">${(g.blockers||[]).map(b=>`<div class="src"><b>${esc(b.blocker)}</b><div class="small">${esc(b.how_to_proceed)}</div></div>`).join('')||'<p class="muted small">None noted.</p>'}</div>
+  <h2>What an agent can do, and where you take over</h2>
+  <div class="two"><div class="box"><h3 class="ok">Agent can do</h3>${list(g.agent_can_do)}</div><div class="box"><h3 class="warn">You must do</h3>${list(g.you_must_do)}</div></div>
+  <h2>Evidence</h2>
+  <div class="box"><p class="small muted" style="margin-top:0">${esc(v.method||'')}</p>
+   ${(g.sources||[]).map(s=>`<div class="src small"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a>${s.quote_found===true?' <span class="ok">✓ quote found on page</span>':s.quote_found===false?' <span class="warn">⚠ quote not found on page</span>':''}${s.supports?`<div class="muted">Supports: ${esc(s.supports)}</div>`:''}${s.quote?`<q>${esc(s.quote)}</q>`:''}</div>`).join('')}</div>
+  <div class="two"><div class="box"><h3 class="ok">Verified in sources</h3>${list(v.verified)}</div><div class="box"><h3>Inferred</h3>${list(v.inferred)}</div></div>
+  <div class="box"><h3 class="warn">Could not verify</h3>${list(v.could_not_verify)}</div>
+  ${v.corrections&&v.corrections.length?`<div class="box"><h3>Corrections to common advice</h3>${list(v.corrections)}</div>`:''}`;
+  (target||$('#app')).innerHTML = html;
+  const url = location.origin + '/g/' + g.slug;
+  $('#share').onclick = async () => { await navigator.clipboard.writeText(url); $('#share').textContent='Link copied'; };
+  $('#md').onclick = async () => { await navigator.clipboard.writeText(toMd(g, url)); $('#md').textContent='Markdown copied'; };
+  if($('#refresh')) $('#refresh').onclick = () => runAgent(g.name, true);
+  document.title = g.name + ' OAuth setup · OAuth Ready';
+}
+
+function toMd(g, url){
+  const a = g.approval||{}, v=g.verification||{};
+  return `# ${g.name}: OAuth app setup\n${url}\n\n**${g.one_liner}**\n\n- Difficulty: ${DIFF[g.difficulty]||g.difficulty}\n- First test: ${g.time_to_first_test}\n- Production: ${g.time_to_production}\n- Review: ${a.required_for} (wait: ${a.typical_wait}; cost: ${a.cost})\n\n## Before you start\n${(g.account_prerequisites||[]).map(x=>'- '+x).join('\n')}\n\n## Steps\n${(g.steps||[]).map((s,i)=>`${i+1}. **${s.title}** (${s.who}): ${s.detail}${s.url?' '+s.url:''}`).join('\n')}\n\n## Watch out for\n${(g.nuances||[]).map(x=>'- '+x).join('\n')}\n\n## If you get stuck\n${(g.blockers||[]).map(b=>`- **${b.blocker}**: ${b.how_to_proceed}`).join('\n')}\n\n## Sources\n${(g.sources||[]).filter(s=>s.quote).map(s=>`- ${s.url}: "${s.quote}"`).join('\n')}\n\n_Could not verify:_ ${(v.could_not_verify||[]).join('; ')||'none'}\n`;
+}
+
+async function runAgent(app, force){
+  if(!app){ go('/'); return; }
+  history.replaceState({}, '', '/new?app='+encodeURIComponent(app));
+  $('#app').innerHTML = `<a class="back" href="/" data-nav>← All guides</a><h1>Researching ${esc(app)}</h1>
+   <p class="sub">An agent is searching the web, reading the provider's docs, drafting a guide, then checking that every quoted line really appears on the page it cites.</p>
+   <div class="log" id="log"></div><div id="out"></div>`;
+  const log = (m, cls) => { const d = document.createElement('div'); d.className = cls||''; d.textContent = '› ' + m; $('#log').appendChild(d); $('#log').scrollTop = 1e9; };
+  log('Starting…');
+  const res = await fetch('/api/generate', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({app, force: !!force})});
+  if(!res.ok || !res.body){ log((await res.json().catch(()=>({}))).error || 'Request failed', 'fail'); return; }
+  const reader = res.body.getReader(), dec = new TextDecoder(); let buf = '';
+  for(;;){ const {value, done} = await reader.read(); if(done) break; buf += dec.decode(value, {stream:true});
+    let i; while((i = buf.indexOf('\n\n')) >= 0){ const chunk = buf.slice(0,i); buf = buf.slice(i+2);
+      const ev = (chunk.match(/^event: (.*)$/m)||[])[1], data = JSON.parse((chunk.match(/^data: (.*)$/m)||[])[1]||'{}');
+      if(ev==='step') log(data.msg);
+      if(ev==='fail') log(data.msg, 'fail');
+      if(ev==='done'){ log('Done.'); history.replaceState({}, '', '/g/'+data.slug); renderGuide(data.guide); window.scrollTo(0,0); }
+    }}
+}
+route();
+</script>
+</body>
+</html>

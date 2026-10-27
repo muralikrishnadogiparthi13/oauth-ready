@@ -1,0 +1,220 @@
+{
+ "https://docs.composio.dev/toolkits/github": {
+  "rendered_chars": 62750,
+  "quotes": [
+   {
+    "q": "Composio-managed OAuth available",
+    "found": true
+   },
+   {
+    "q": "Composio does not currently provide the GitHub App installation link automatically during this flow.",
+    "found": false
+   },
+   {
+    "q": "repo,user,gist,notifications,project,workflow,codespace",
+    "found": false
+   }
+  ]
+ },
+ "https://support.google.com/cloud/answer/13463817": {
+  "rendered_chars": 4012,
+  "quotes": [
+   {
+    "q": "Restricted Scope Verification: 6 weeks",
+    "found": false
+   },
+   {
+    "q": "Google does not charge the developer any fees for security assessment.",
+    "found": false
+   }
+  ]
+ },
+ "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "By default, refresh tokens expire in 100 days (8640000 seconds).",
+    "found": null
+   },
+   {
+    "q": "By default, access tokens expire in 30 minutes (1800 seconds).",
+    "found": null
+   },
+   {
+    "q": "Navigate to All > System OAuth > Application Registry and then click New. On the interceptor page, click Create an OAuth API endpoint for external clients",
+    "found": null
+   },
+   {
+    "q": "The instance matches the URL of the incoming request to one of the redirect URLs. If no match is made, the instance uses the first redirect URL.",
+    "found": null
+   }
+  ]
+ },
+ "https://www.servicenow.com/docs/r/platform-security/authentication/configure-an-oauth-authorization-code-grant.html": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "Navigate to Machine Identity Console > Inbound integrations > New integration > OAuth - Authorization code grant.",
+    "found": null
+   },
+   {
+    "q": "The default value is 8,640,000 seconds.",
+    "found": null
+   }
+  ]
+ },
+ "https://www.servicenow.com/docs/r/platform-security/authentication/c_OAuthAuthorizationCodeFlow.html": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "https://myinstance.service-now.com/oauth_auth.do?response_type=code&redirect_uri={the_redirect_url}&client_id={the_client_identifier}",
+    "found": null
+   },
+   {
+    "q": "The user must be logged into the ServiceNow instance and manually approve access by interacting with an Allow/Deny UI prompt.",
+    "found": null
+   }
+  ]
+ },
+ "https://www.servicenow.com/docs/r/platform-security/authentication/client-credentials.html": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "Inbound client credentials grant type is a capability that can be controlled through a system property. By default the system property is false.",
+    "found": null
+   }
+  ]
+ },
+ "https://www.servicenow.com/docs/r/platform-security/authentication/new-inbound-integrations.html": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "On the instance, navigate to All > Machine Identity Console > Inbound integrations > New integration. Choose the application connection type (grant type).",
+    "found": null
+   }
+  ]
+ },
+ "https://www.servicenow.com/docs/r/platform-security/authentication/cimd-inbound.html": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "CIMD is available from Zurich Patch 7 onward and from Australia Patch 1 onward.",
+    "found": null
+   },
+   {
+    "q": "An instance doesn't accept clients on its own ... you register each CIMD client before it can connect.",
+    "found": null
+   }
+  ]
+ },
+ "https://shopify.dev/docs/apps/launch/distribution/select-distribution-method": {
+  "rendered_chars": 3404,
+  "quotes": [
+   {
+    "q": "The Distribution card appears only for apps that belong to a Partner organization.",
+    "found": true
+   },
+   {
+    "q": "If you selected Custom distribution, then generate an install link and send it to the store owner.",
+    "found": true
+   }
+  ]
+ },
+ "https://community.shopify.dev/t/longer-app-store-review-times-what-you-need-to-know/31728": {
+  "rendered_chars": 0,
+  "quotes": [
+   {
+    "q": "review times are longer than usual right now, and we apologize for the wait.",
+    "found": null
+   }
+  ]
+ },
+ "https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens": {
+  "rendered_chars": 19990,
+  "quotes": [
+   {
+    "q": "Refresh token for an expiring offline access token | 90 days (refresh_token_expires_in is 7776000) when issued.",
+    "found": false
+   }
+  ]
+ },
+ "https://help.shopify.com/en/partners/about": {
+  "rendered_chars": 3238,
+  "quotes": [
+   {
+    "q": "The Shopify Partner Program is a global partner community that is free to join",
+    "found": true
+   }
+  ]
+ },
+ "https://docs.composio.dev/toolkits/shopify": {
+  "rendered_chars": 24214,
+  "quotes": [
+   {
+    "q": "Composio-managed OAuth available? No",
+    "found": false
+   }
+  ]
+ },
+ "https://docs.slack.dev/app-management/distribution": {
+  "rendered_chars": 18647,
+  "quotes": [
+   {
+    "q": "Scroll to Share Your App with Other Workspaces within the Manage Distribution section. ... Click Activate Public Distribution.",
+    "found": true
+   },
+   {
+    "q": "Your app must support SSL for all of the following URLs: OAuth redirect URLs",
+    "found": true
+   },
+   {
+    "q": "Other workspaces may only allow the installation of apps officially listed in the Slack Marketplace.",
+    "found": true
+   }
+  ]
+ },
+ "https://slack.com/help/articles/1500009181142-Manage-app-settings-and-permissions": {
+  "rendered_chars": 2702,
+  "quotes": [
+   {
+    "q": "Limit members to installing apps from the Slack Marketplace.",
+    "found": true
+   }
+  ]
+ },
+ "https://docs.composio.dev/toolkits/slack": {
+  "rendered_chars": 10293,
+  "quotes": [
+   {
+    "q": "Composio is working on Marketplace review for the managed Slack app.",
+    "found": false
+   },
+   {
+    "q": "when installing non-Marketplace apps, you'll need to be an owner to install directly and complete the connection.",
+    "found": false
+   }
+  ]
+ },
+ "https://developer.spotify.com/documentation/web-api/references/changes/july-2026": {
+  "rendered_chars": 1499,
+  "quotes": [
+   {
+    "q": "Client IDs per developer: Increased from 1 to 25.",
+    "found": false
+   },
+   {
+    "q": "API quotas for development mode are now counted per developer account rather than per Client ID.",
+    "found": true
+   }
+  ]
+ },
+ "https://docs.composio.dev/toolkits/spotify": {
+  "rendered_chars": 5398,
+  "quotes": [
+   {
+    "q": "Composio does not provide a default OAuth app for Spotify. Create your own OAuth app in the Spotify Developer Dashboard to use the Spotify toolkit.",
+    "found": false
+   }
+  ]
+ }
+}

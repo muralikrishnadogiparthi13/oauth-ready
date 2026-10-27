@@ -1,0 +1,16 @@
+name = "oauth-guides"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[ai]
+binding = "AI"
+
+[assets]
+directory = "../site"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[kv_namespaces]]
+binding = "GUIDES"
+id = "932568545a8b45ea969bd1685409a669"

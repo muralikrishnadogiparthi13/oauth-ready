@@ -1,0 +1,273 @@
+{
+  "slug": "servicenow",
+  "name": "ServiceNow",
+  "website": "https://www.servicenow.com/docs/r/platform-security/authentication/oauth-inbound.html",
+  "category": "IT service management / enterprise workflow",
+  "one_liner": "No central OAuth app or review exists: every customer's ServiceNow admin must register your client on their own instance, so production readiness is a per-customer onboarding task, not an approval.",
+  "difficulty": "hard",
+  "difficulty_reason": "There is no provider review to pass, but there is also no global OAuth app, so every customer instance needs an admin (oauth_admin or admin role) to create an inbound integration and hand you a client ID and secret before any end user can connect.",
+  "time_to_first_test": "20-40 minutes on a ServiceNow instance you already have admin access to (inferred; not published)",
+  "time_to_production": "No provider review; each customer goes live as soon as their admin registers your client (inferred: hours to a few weeks per customer, driven by the customer's own change process). Optional ServiceNow Store certification typically 3-5 weeks.",
+  "approval": {
+    "required_for": "Nothing for API access via OAuth. Each customer instance admin must create an inbound OAuth integration for your app. Only a ServiceNow Store listing (optional) requires certification.",
+    "who_reviews": "The customer's own ServiceNow administrator (per instance). ServiceNow's certification team only if you choose to list on the ServiceNow Store.",
+    "typical_wait": "No provider wait for OAuth access. Store certification: ServiceNow states it 'typically requires 3-5 weeks'. Per-customer admin turnaround: not published.",
+    "cost": "Free for OAuth registration on a customer instance. Store listing requires Build Partner / Partner Program membership; fee not confirmed from an official source."
+  },
+  "account_prerequisites": [
+    "A ServiceNow instance where you have admin rights, for building and testing (for example a personal developer instance; availability not checked in this pass)",
+    "For each customer: a person on their instance with the oauth_admin, mi_admin, or admin role (Machine Identity Console flow) or oauth_admin (old Application Registry flow)",
+    "A stable HTTPS redirect (callback) URL for your app, or the Composio redirect URI if you use Composio",
+    "Optional: a logo URL to show on the instance's consent (Allow/Deny) page",
+    "Optional: ServiceNow Build Partner / Partner Program membership, only if you want a ServiceNow Store listing"
+  ],
+  "steps": [
+    {
+      "title": "Decide the grant type",
+      "detail": "Use the authorization code grant so each end user signs in to their own instance and actions run as that user (respects their ACLs). Use client credentials only for a service-account style integration where actions are attributed to one integration user; it is off by default and needs extra admin setup. Avoid ROPC (password) grant.",
+      "who": "you",
+      "url": "https://www.servicenow.com/community/platform-privacy-security-blog/choose-the-right-oauth-grant-type-for-servicenow-integration/ba-p/3385352"
+    },
+    {
+      "title": "Build and test against your own instance",
+      "detail": "On an instance you control, create an inbound integration (see next step), then test the flow: https://<instance>.service-now.com/oauth_auth.do?response_type=code&client_id=...&redirect_uri=... and exchange the code at https://<instance>.service-now.com/oauth_token.do.",
+      "who": "either",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/c_OAuthAuthorizationCodeFlow.html"
+    },
+    {
+      "title": "Write a customer admin setup guide (current UI)",
+      "detail": "Instruct the customer admin: Machine Identity Console > Inbound integrations > New integration > OAuth - Authorization code grant. Fill Name, Provider name (mandatory), Redirect URL (your callback exactly), leave Client Secret blank to auto-generate or paste one, keep Active checked, optionally add an auth scope and Logo URL, and leave token lifespans at default unless agreed (access 1800 s, refresh 8,640,000 s = 100 days). Save, then send you the Client ID, Client Secret, and instance URL over a secure channel.",
+      "who": "either",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/configure-an-oauth-authorization-code-grant.html"
+    },
+    {
+      "title": "Include the legacy path for older instances",
+      "detail": "On instances without the Machine Identity Console flow: All > System OAuth > Application Registry > New > 'Create an OAuth API endpoint for external clients'. Same fields (Name, Client Secret, Redirect URL, Refresh/Access Token Lifespan, Active).",
+      "who": "either",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html"
+    },
+    {
+      "title": "Store credentials per instance",
+      "detail": "Model each customer as its own OAuth client: store instance base URL + client ID + client secret per tenant. Build auth and token URLs from the instance URL (or the customer's custom instance URL). In Composio, this means one custom auth config per customer instance (inferred).",
+      "who": "you",
+      "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+    },
+    {
+      "title": "Handle token refresh and expiry",
+      "detail": "Refresh access tokens before 30 minutes. Plan for refresh tokens expiring after 100 days by default (or whatever the admin set); when it expires the user must re-consent.",
+      "who": "you",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html"
+    },
+    {
+      "title": "(Optional) Client credentials for machine integrations",
+      "detail": "If a customer prefers no per-user login: admin creates system property glide.oauth.inbound.client.credential.grant_type.enabled = true and sets the OAuth Application User on the OAuth entity (or uses Machine Identity Console > Client Credentials Grant). All actions then run as that user.",
+      "who": "either",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/client-credentials.html"
+    },
+    {
+      "title": "(Optional) Evaluate CIMD for newer instances",
+      "detail": "On Zurich Patch 7+ or Australia Patch 1+, a public client with PKCE can be identified by an HTTPS Client ID Metadata Document URL instead of a secret. The admin still must register your CIMD client on each instance, but no secret exchange is needed.",
+      "who": "you",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/cimd-inbound.html"
+    },
+    {
+      "title": "(Optional) ServiceNow Store listing",
+      "detail": "Only if you want a scoped app on the ServiceNow Store (for example to ship setup automation). Requires Build Partner membership and certification. Not needed for OAuth API access.",
+      "who": "you",
+      "url": "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630"
+    }
+  ],
+  "nuances": [
+    "Every URL is instance-specific: https://<instance>.service-now.com/oauth_auth.do and /oauth_token.do. There is no global login.servicenow.com authorization server for API access.",
+    "Redirect URL matching: the old Application Registry form says 'If no match is made, the instance uses the first redirect URL.' Register your exact callback first.",
+    "Default token lifespans: access token 1800 seconds (30 minutes), refresh token 8,640,000 seconds (100 days). Admins can change both per client, so do not hardcode.",
+    "The user sees an Allow/Deny approval page on their instance; if the instance uses SSO, the user is redirected to the customer IdP first.",
+    "Access follows the signed-in user's roles and ACLs for authorization code; for client credentials it follows the configured OAuth Application User.",
+    "Client credentials grant is disabled by default ('By default the system property is false').",
+    "Enforce token restriction / API access policies can limit which REST APIs your token may call. If tool calls return 401/403 despite a valid token, ask the admin about API access policies and auth scopes.",
+    "Auth scopes in the new Machine Identity Console flow can restrict the client to selected APIs; 'useraccount' style broad access depends on admin choices.",
+    "Tokens can be JWT or Opaque; JWKS is at api/now/oauth/jwks on the instance.",
+    "CIMD replaces Dynamic Client Registration as ServiceNow's supported approach for unregistered clients, but an admin still registers each CIMD client per instance.",
+    "Docs now show release 'Brazil' (updated 10 Sep 2026); the Application Registry flow is filed under 'Old Inbound integrations experience'."
+  ],
+  "blockers": [
+    {
+      "blocker": "No central OAuth app: you cannot let any ServiceNow user self-connect without their admin first registering your client.",
+      "how_to_proceed": "Make admin setup part of customer onboarding. Ship a one-page admin guide with exact field values and a secure way to submit client ID, secret, and instance URL."
+    },
+    {
+      "blocker": "Customer admins may refuse to grant broad access or may enable token restrictions that block some APIs.",
+      "how_to_proceed": "List the exact REST APIs and tables your agent needs, and suggest an auth scope plus API access policy that covers only those."
+    },
+    {
+      "blocker": "Composio-managed OAuth is not available for ServiceNow.",
+      "how_to_proceed": "Create a custom auth config per customer instance with that instance's client ID and secret, and register Composio's redirect URI in the customer's inbound integration."
+    },
+    {
+      "blocker": "Refresh tokens expire (100 days by default), forcing users to reconnect.",
+      "how_to_proceed": "Detect invalid_grant on refresh and prompt a reconnect, or ask the admin to set a longer refresh token lifespan."
+    }
+  ],
+  "agent_can_do": [
+    "Draft the customer admin setup guide with exact navigation paths for both the Machine Identity Console flow and the old Application Registry flow",
+    "Generate the redirect URI and pre-fill recommended field values (name, provider name, logo URL, token lifespans)",
+    "Build per-instance authorization and token URLs from a customer's instance URL",
+    "List the ServiceNow REST APIs and tables the agent's tools need, and draft a matching auth scope / API access policy request",
+    "Write token refresh and reconnect handling, including invalid_grant detection",
+    "Test the OAuth flow end to end on a developer instance you already have access to"
+  ],
+  "you_must_do": [
+    "Get each customer's ServiceNow admin to create the inbound integration on their instance (only someone with oauth_admin/admin on that instance can do it)",
+    "Receive and securely store each customer's client ID and client secret",
+    "Agree with each customer's security team on grant type, scopes, and token lifespans",
+    "Join the ServiceNow partner program and pass certification only if you choose to list on the ServiceNow Store"
+  ],
+  "composio_note": "Composio's ServiceNow toolkit page shows 'Composio-managed OAuth not available'. Supported auth schemes listed are OAuth2, BASIC, and S2S_OAUTH2 (171 tools, version 20260924_00). So you must bring your own OAuth client: for ServiceNow that means each customer's admin creates an inbound integration on their instance with the redirect URI shown in your Composio auth config, and you create a custom auth config with that client ID and secret. Composio's custom-auth docs note that 'Self-hosted or regional variants ... need their own OAuth app', which matches ServiceNow's per-instance model. S2S_OAUTH2 likely maps to client credentials (inferred), which also needs the customer admin to enable the grant.",
+  "sources": [
+    {
+      "title": "Create an endpoint for clients to access the instance (ServiceNow Docs, Brazil, updated 10 Sep 2026)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html",
+      "quote": "By default, refresh tokens expire in 100 days (8640000 seconds).",
+      "supports": "Default refresh token lifespan"
+    },
+    {
+      "title": "Create an endpoint for clients to access the instance (ServiceNow Docs)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html",
+      "quote": "By default, access tokens expire in 30 minutes (1800 seconds).",
+      "supports": "Default access token lifespan"
+    },
+    {
+      "title": "Create an endpoint for clients to access the instance (ServiceNow Docs)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html",
+      "quote": "Navigate to All > System OAuth > Application Registry and then click New. On the interceptor page, click Create an OAuth API endpoint for external clients",
+      "supports": "Legacy setup path and that the customer admin creates the client (Role required: oauth_admin)"
+    },
+    {
+      "title": "Create an endpoint for clients to access the instance (ServiceNow Docs)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/t_CreateEndpointforExternalClients.html",
+      "quote": "The instance matches the URL of the incoming request to one of the redirect URLs. If no match is made, the instance uses the first redirect URL.",
+      "supports": "Redirect URL matching nuance"
+    },
+    {
+      "title": "Configure an OAuth authorization code grant (ServiceNow Docs, Brazil)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/configure-an-oauth-authorization-code-grant.html",
+      "quote": "Navigate to Machine Identity Console > Inbound integrations > New integration > OAuth - Authorization code grant.",
+      "supports": "Current setup path; role required oauth_admin, mi_admin, admin"
+    },
+    {
+      "title": "Configure an OAuth authorization code grant (ServiceNow Docs, Brazil)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/configure-an-oauth-authorization-code-grant.html",
+      "quote": "The default value is 8,640,000 seconds.",
+      "supports": "Refresh token default in new Machine Identity Console flow (access token default 1800 seconds)"
+    },
+    {
+      "title": "OAuth authorization code grant flow (ServiceNow Docs)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/c_OAuthAuthorizationCodeFlow.html",
+      "quote": "https://myinstance.service-now.com/oauth_auth.do?response_type=code&redirect_uri={the_redirect_url}&client_id={the_client_identifier}",
+      "supports": "Instance-specific authorization URL; token URL is /oauth_token.do on the same instance"
+    },
+    {
+      "title": "OAuth authorization code grant flow (ServiceNow Docs)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/c_OAuthAuthorizationCodeFlow.html",
+      "quote": "In the ServiceNow implementation, the end user must be logged into the instance. The instance prompts the end user with a UI page that has Allow and Deny buttons.",
+      "supports": "End-user consent page"
+    },
+    {
+      "title": "Client Credentials (ServiceNow Docs, Brazil)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/client-credentials.html",
+      "quote": "Inbound client credentials grant type is a capability that can be controlled through a system property. By default the system property is false.",
+      "supports": "Client credentials disabled by default; requires glide.oauth.inbound.client.credential.grant_type.enabled and OAuth Application User"
+    },
+    {
+      "title": "New Inbound integrations experience (ServiceNow Docs, Brazil)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/new-inbound-integrations.html",
+      "quote": "On the instance, navigate to All > Machine Identity Console > Inbound integrations > New integration. Choose the application connection type (grant type).",
+      "supports": "New UI and available grant types (auth code, client credentials, JWT bearer, ROPC)"
+    },
+    {
+      "title": "About CIMD client integration (ServiceNow Docs, Brazil)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/cimd-inbound.html",
+      "quote": "CIMD is available from Zurich Patch 7 onward and from Australia Patch 1 onward.",
+      "supports": "CIMD availability"
+    },
+    {
+      "title": "About CIMD client integration (ServiceNow Docs, Brazil)",
+      "url": "https://www.servicenow.com/docs/r/platform-security/authentication/cimd-inbound.html",
+      "quote": "An instance doesn't accept clients on its own ... you register each CIMD client before it can connect.",
+      "supports": "CIMD still needs per-instance admin registration"
+    },
+    {
+      "title": "Choose the Right OAuth Grant Type for ServiceNow Integration (ServiceNow Community blog, Platform Privacy & Security, updated 26 Mar 2026)",
+      "url": "https://www.servicenow.com/community/platform-privacy-security-blog/choose-the-right-oauth-grant-type-for-servicenow-integration/ba-p/3385352",
+      "quote": "Since there is no user context, the actions performed using this grant type are attributed to the application itself.",
+      "supports": "Client credentials vs authorization code trade-off"
+    },
+    {
+      "title": "Guide to getting your App Certified And Certification Requirements (ServiceNow Community App Publisher blog, updated 21 Jul 2026)",
+      "url": "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630",
+      "quote": "Certification, from design complete and submission for certification to ready for publishing on the store, typically requires 3-5 weeks.",
+      "supports": "Store certification timeline (optional path)"
+    },
+    {
+      "title": "Guide to getting your App Certified And Certification Requirements (ServiceNow Community App Publisher blog)",
+      "url": "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630",
+      "quote": "Note that you must be a Build Partner to list an application on the ServiceNow Store.",
+      "supports": "Store listing prerequisite"
+    },
+    {
+      "title": "ServiceNow toolkit (Composio docs)",
+      "url": "https://docs.composio.dev/toolkits/servicenow",
+      "quote": "Composio-managed OAuth not available",
+      "supports": "composio_note: bring your own OAuth client"
+    },
+    {
+      "title": "Managed OAuth apps (Composio docs)",
+      "url": "https://docs.composio.dev/toolkits/managed-auth",
+      "quote": "Register your own OAuth app when a toolkit does not have managed OAuth. Then create a custom auth config with the app's client ID and client secret.",
+      "supports": "composio_note: custom auth config"
+    },
+    {
+      "title": "Managed vs custom auth (Composio docs)",
+      "url": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app",
+      "quote": "Self-hosted or regional variants (e.g., a private Salesforce subdomain) need their own OAuth app.",
+      "supports": "composio_note: per-instance providers need their own app"
+    }
+  ],
+  "verification": {
+    "checked_on": "2026-10-28",
+    "method": "Read official ServiceNow product docs (Brazil release pages), ServiceNow-hosted community blogs, and Composio docs listed in sources; no provider account created and no instance signed in to",
+    "verified": [
+      "Customer instance admins create the OAuth client on their own instance (oauth_admin role for old flow; oauth_admin, mi_admin, admin for new flow)",
+      "Current UI path is Machine Identity Console > Inbound integrations > New integration; Application Registry is the 'Old Inbound integrations experience'",
+      "Authorization and token endpoints are per instance: /oauth_auth.do and /oauth_token.do",
+      "Default access token lifespan 1800 seconds; default refresh token lifespan 8,640,000 seconds (100 days); both configurable per client",
+      "Client credentials grant is off by default and needs a system property plus an OAuth Application User",
+      "Users see an Allow/Deny prompt during authorization code flow",
+      "CIMD available from Zurich Patch 7 and Australia Patch 1; still requires per-instance client registration; public clients with PKCE only",
+      "Store certification typically 3-5 weeks and requires Build Partner membership",
+      "Composio-managed OAuth is not available for ServiceNow; auth schemes listed are OAuth2, BASIC, S2S_OAUTH2"
+    ],
+    "inferred": [
+      "Store certification is not required for OAuth API access: none of the OAuth inbound setup docs mention certification or a provider review",
+      "Time to first test (20-40 minutes) and per-customer onboarding time (hours to weeks) are estimates, not published",
+      "In Composio you need one custom auth config per customer instance, because each instance issues its own client ID and secret",
+      "Composio's S2S_OAUTH2 scheme likely corresponds to the client credentials grant",
+      "The old docs' instruction to append /oauth_redirect.do to the redirect URL describes ServiceNow-as-client callbacks; an external app should register its own exact callback URL (the new form just says 'URL to which the authorization code should be sent')"
+    ],
+    "could_not_verify": [
+      "ServiceNow Partner / Build Program membership fees (only third-party sites discuss them)",
+      "Whether personal developer instances are currently free and how long they stay active (not checked in this pass)",
+      "Whether Composio's ServiceNow OAuth2 scheme supports CIMD or PKCE public clients",
+      "The exact Composio redirect URI value for ServiceNow (shown in the Composio dashboard; not read here)",
+      "Real-world turnaround for customer admins to complete setup"
+    ],
+    "corrections": [
+      "Common advice says to use System OAuth > Application Registry > 'Create an OAuth API endpoint for external clients'. Current docs (Brazil, Sep 2026) file this under 'Old Inbound integrations experience'; the primary path is now Machine Identity Console > Inbound integrations > New integration.",
+      "Client credentials is often described as simply available; ServiceNow docs say it is disabled by default and needs the glide.oauth.inbound.client.credential.grant_type.enabled property set to true.",
+      "CIMD is sometimes read as removing per-instance setup. ServiceNow docs say an instance 'doesn't accept clients on its own' and each CIMD client must be registered; it only removes the client secret exchange.",
+      "ServiceNow Store certification is often assumed to be required for an integration. It is only needed to list a scoped app on the Store, not to call ServiceNow APIs with OAuth (inferred from the OAuth docs).",
+      "Evidence check 2026-10-28: one source line was a paraphrase, not the docs' wording. Replaced with the exact sentence from the ServiceNow authorization code flow page."
+    ]
+  },
+  "last_updated": "2026-10-28"
+}
